@@ -1,54 +1,51 @@
+## Description
 
+DASL stands for **Digital American Sign Language**. This is an ongoing project led by a group of students enrolled in [Purdue EPICS](https://epicsisd.wixsite.com/isdepics). We are project partnered with the [Indiana School for the Deaf](https://www.deafhoosiers.com/), an accredited K-12 institution for students with hearing disabilities located in Indianapolis, IN.
 
-## Installation
-Follow these [instructions](mediapipe/docs/install.md).
+Our goal is to build an iOS application that helps K-6 students with hearing disabilities learn English - a challenge because of phonetic differences between the ASL and English dialects. We utilize Google's [Mediapipe](https://github.com/google/mediapipe) library to track hand and face movements and run deep learning models in the backend to translate ASL signs into the corresponding English alphabet, word or phrase *in real-time*.
 
-## Getting started
-See mobile, desktop, web and Google Coral [examples](mediapipe/docs/examples.md).
+## Desktop Application (MacOS)
 
-## Documentation
-We will soon create Documentation to help understand the changes we made in this framework.
-[MediaPipe Read-the-Docs](https://mediapipe.readthedocs.io/) or [docs.mediapipe.dev](https://docs.mediapipe.dev)
+Our iOS application is currently under development. In order to run a demo of our desktop application, follow the steps given below:
 
-Check out the [Examples page](https://mediapipe.readthedocs.io/en/latest/examples.html) for tutorials on how to use MediaPipe. [Concepts page](https://mediapipe.readthedocs.io/en/latest/concepts.html) for basic definitions
+#### 1.   Install Homebrew
 
-## Visualizing MediaPipe graphs
-A web-based visualizer is hosted on [viz.mediapipe.dev](https://viz.mediapipe.dev/). Please also see instructions [here](mediapipe/docs/visualizer.md).
+*You may skip this step if Homebrew is already installed.*
 
-## Google Open Source Code search
-Search MediaPipe Github repository using [Google Open Source code search](https://t.co/LSZnbMUUnT?amp=1)
+On the terminal, run the command `/bin/bash -c "$(curl -fsSL
+https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
-## Videos
-*  [YouTube Channel](https://www.youtube.com/channel/UCObqmpuSMx-usADtL_qdMAw)
+#### 2.   Install XCode
 
-[MediaPipe](http://mediapipe.dev)
+  * Download and install the latest version of XCode from the App store
+  * On the terminal, run this command to download XCode’s command line tools: `xcode-select --install`
+  * Then enter the following command to accept the XCode licence agreement: `sudo xcodebuild -license accept`
 
-This project is part of a senior design project at Purdue University. My team and I are attempting to create an ASL translator using the Mediapipe Framework. We have so far been able to translator ASL letters. We are going to attempt to interpret words as well in ASL.
+#### 3.  Install bazel
 
-![Real-time Hand Tracking](mediapipe/docs/images/mobile/hand_tracking_android_gpu.gif)
+On the terminal, run the command `brew install bazel`
 
-> "<em>MediaPipe has made it extremely easy to track the hands of the user. We take the data and interpret it into the ASL letter it is likely to be</em>"
+#### 4.  Git clone this repository.
 
-## ML Solutions in MediaPipe
+#### 5.  Install OpenCV and FFmpeg
 
-* [Hand Tracking](mediapipe/docs/hand_tracking_mobile_gpu.md)
-![hand_tracking](mediapipe/docs/images/mobile/hand_tracking_3d_android_gpu_small.gif)
-This shows the handtracking Mediapipe has already created.
+On the terminal, run the following commands:
+  * `brew install opencv@3`
+  * `brew uninstall --ignore-dependencies glog`
 
-## ASL Translator App
-### Android (Google Pixel 2)
-![Real-time Hand Tracking](mediapipe/docs/images/ASL.gif)
+#### 6.  Install Python and Python 'six' library
 
-### iOS (7th Generation, 10.0+)
-![Real-time Hand Tracking](mediapipe/docs/images/RecordingScreen.gif)
-Gifs of each category came from this database: https://asl-lex.github.io/asl-lex/index.html
+On the terminal, run the following commands:
+  * `brew install python`
+  * `sudo ln -s -f /usr/local/bin/python3.9.4 /usr/local/bin/python`
+  * `pip3 install --user six`
 
-## Dynamic Sign Translation 
-Architecture was based off of this repo: https://github.com/Tachionstrahl/SignLanguageRecognition
+#### Run the demo
 
-Converted model to work on CPU, translate ASL phrases, and work on MacOS
-![Real-time Hand Tracking](mediapipe/docs/images/hello.gif)
-![Real-time Hand Tracking](mediapipe/docs/images/here.gif)
-![Real-time Hand Tracking](mediapipe/docs/images/no.gif)
+  * `cd` into the `/src` directory within `SignLanguageRecognition`
+  * Run `bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 app:prediction_cpu`
+      * If this command isn't executed, it is likely due to bazel version discrepancy. To fix this, run `cd "/usr/local/Cellar/bazel/4.0.0/libexec/bin" && curl -fLO https://releases.bazel.build/3.4.1/release/bazel-3.4.1-darwin-x86_64 && chmod +x bazel-3.4.1-darwin-x86_64`
+  * Finally, run `GLOG_logtostderr=1 bazel-bin/app/prediction_cpu --calculator_graph_config_file=graphs/sign_lang_prediction_cpu.pbtxt`
+  * Frame number in the range of [20, 86] are read and interpreted. *Sign until buffer is at least 20 and at most 86.*
 
-
+Dynamic sign model design was based off of this [project](https://github.com/Tachionstrahl/SignLanguageRecognition).
